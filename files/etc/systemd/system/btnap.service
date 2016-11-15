@@ -1,0 +1,24 @@
+# --------------------------------------------------------------------------
+# Systemd service definition for btnap.service.
+#
+# Note that the service acts as server or client, depending on the
+# configuration in /etc/btnap.conf.
+#
+# Original unit-files adapted from Mike Kazantsev (See CREDITS for details).
+#
+# Author: Bernhard Bablok
+# License: GPL3
+#
+# Website: https://github.com/bablokb/pi-btnap
+#
+# --------------------------------------------------------------------------
+
+[Unit]
+After=bluetooth.service
+PartOf=bluetooth.service
+
+[Service]
+ExecStart=/usr/local/sbin/btnap.service.sh
+
+[Install]
+WantedBy=bluetooth.target
