@@ -11,14 +11,15 @@
 
 # --- defaults used during installation   ----------------------------------
 
-MODE="${1:-server}"     # "server" or "client" (default is "server")
+MODE="${1:-server}"     # "server", "nap" or "client" (default is "server")
 BR_DEV="br0"            # bridge device
 BR_IP="192.168.100.1"   # IP of bridge-device
 BR_RANGE="192.168.100.100,192.168.100.150,12h"  # DHCP-range for dnsmasq
 BR_DOMAIN="example.com"
 
-if [ "$MODE" = "server" ]; then
+if [ "$MODE" = "nap" ]; then
   ADD_IF="eth0"         # interface to add to the bridge, e.g. eth0
+  MODE="server"         # python-service only knows "server" and "client"
 else
   ADD_IF=""             # interface to add to the bridge, e.g. eth0
 fi
