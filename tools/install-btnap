@@ -24,6 +24,9 @@ else
   ADD_IF=""             # interface to add to the bridge, e.g. eth0
 fi
 
+BT_CONF_HIDDEN="0"        # system is permanently discoverable/pairable
+                          # supported values: 0|1
+
 # --- basic packages   ------------------------------------------------------
 
 [ "$MODE" = "server" ] && PACKAGES="dnsmasq"
@@ -74,8 +77,13 @@ chmod 644 /etc/btnap.conf
 # --- configure bluetooth   -------------------------------------------------
 
 if [ "$MODE" = "server" ]; then
-  sed -i -e "/DiscoverableTimeout/s/^.*$/DiscoverableTimeout = 0/" \
+  if [ $BT_CONF_HIDDEN -eq 0 ]; then
+    sed -i -e "/DiscoverableTimeout/s/^.*$/DiscoverableTimeout = 0/" \
          -e "/PairableTimeout/s/^.*$/PairableTimeout = 0/" \
+                                                    /etc/bluetooth/main.conf
+  else
+    sed -i -e "/DiscoverableTimeout/s/^.*$/#DiscoverableTimeout = 0/" \
+         -e "/PairableTimeout/s/^.*$/#PairableTimeout = 0/" \
                                                     /etc/bluetooth/main.conf
 fi
 
