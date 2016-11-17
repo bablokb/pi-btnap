@@ -12,6 +12,7 @@
 # --- defaults used during installation   ----------------------------------
 
 MODE="${1:-server}"     # "server", "nap" or "client" (default is "server")
+                        # 'nap' is only valid during installation
 BR_DEV="br0"            # bridge device
 BR_IP="192.168.100.1"   # IP of bridge-device
 BR_RANGE="192.168.100.100,192.168.100.150,12h"  # DHCP-range for dnsmasq
@@ -29,10 +30,11 @@ BT_CONF_HIDDEN="0"        # system is permanently discoverable/pairable
 
 # --- basic packages   ------------------------------------------------------
 
-[ "$MODE" = "server" ] && PACKAGES="dnsmasq"
+PACKAGES="bridge-utils python-dbus python-gobject"
+[ "$MODE" = "server" ] && PACKAGES+=" dnsmasq"
 if [ -n "$PACKAGES" ]; then
   apt-get update
-  apt-get install $PACKAGES
+  apt-get -y install $PACKAGES
 fi
 
 # --- install specific files   ----------------------------------------------
@@ -85,10 +87,13 @@ if [ "$MODE" = "server" ]; then
     sed -i -e "/DiscoverableTimeout/s/^.*$/#DiscoverableTimeout = 0/" \
          -e "/PairableTimeout/s/^.*$/#PairableTimeout = 0/" \
                                                     /etc/bluetooth/main.conf
+  fi
 fi
 
 # --- configure dnsmasq   ---------------------------------------------------
 
+[ -f /etc/dnsmasq.conf ] &&  cp -a /etc/dnsmasq.conf \
+                     /etc/dnsmasq.conf.$(date -r /etc/dnsmasq.conf '+%Y%m%d')
 cat > /etc/dnsmasq.conf <<EOF
 interface=$BR_DEV
 expand-hosts
