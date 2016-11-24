@@ -21,7 +21,7 @@ if [ -n "$(brctl show $BR_DEV 2>&1 >/dev/null)" ]; then
    brctl addbr "$BR_DEV"
    brctl setfd "$BR_DEV" 0
    brctl stp "$BR_DEV" off
-   ip addr add "$BR_IP/24" dev "$BR_DEV"
+   ip addr add "$BR_IP" dev "$BR_DEV"
    [ -n "$ADD_IF" ] && brctl addif "$BR_DEV" "$ADD_IF"
    ip link set "$BR_DEV" up
 fi
