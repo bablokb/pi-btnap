@@ -1,10 +1,25 @@
 #!/usr/bin/env python2
+# --------------------------------------------------------------------------
+# This scripts implements the btnap-service.
+#
+# The script is a modified version of the script found in
+# the post by Mike Kazantsev. It adds automatic
+# bluetooth authentication (source Merlin Schumacher from ct-magazine).
+# See CREDITS for details.
+#
+# Author: Bernhard Bablok
+# License: GPL3
+#
+# Website: https://github.com/bablokb/pi-btnap
+#
+# --------------------------------------------------------------------------
+
 from __future__ import absolute_import, print_function
 
 import os, sys, time, types, subprocess, signal
-
 import dbus
 
+import * from Agent
 
 ### ~bluezutils.py
 
