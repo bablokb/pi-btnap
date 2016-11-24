@@ -5,3 +5,8 @@ The files of this projects are from various sources on the internet,
 especially Mike Kazantsev post
 
 http://blog.fraggod.net/2015/03/28/bluetooth-pan-network-setup-with-bluez-5x.html
+
+Modifications to enable automatic authentication are from
+Merlin Schumacher <mls@ct.de> from c't Magazin (www.ct.de).
+
+Both scripts base on sample bluetooth scripts provided with bluez.
