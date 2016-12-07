@@ -14,18 +14,20 @@
 MODE="${1:-server}"     # "server" or "client" (default is "server")
 ADD_IF="$2"             # interface to add to the bridge, e.g. eth0
 
-BR_DEV="br0"             # bridge device
-BR_IP="192.168.1.1/24"   # IP of bridge-device
-BR_RANGE="192.168.100.100,192.168.100.150,12h"  # DHCP-range for dnsmasq
+BR_DEV="br0"               # bridge device
+BR_IP="192.168.20.99/24"   # IP of bridge-device
+BR_GW="192.168.20.1"       # Gateway for bridge-device
+BR_RANGE="192.168.20.100,192.168.20.150,12h"  # DHCP-range for dnsmasq
 BR_DOMAIN="example.com"
 
+BT_CONF_DNSMASQ="1"       # install dnsmasq (supported values: 0|1)
 BT_CONF_HIDDEN="0"        # system is permanently discoverable/pairable
                           # supported values: 0|1
 
 # --- basic packages   ------------------------------------------------------
 
 PACKAGES="bridge-utils python-dbus python-gobject"
-[ "$MODE" = "server" ] && PACKAGES+=" dnsmasq"
+[ "$BT_CONF_DNSMASQ" = "1" ] && PACKAGES+=" dnsmasq"
 if [ -n "$PACKAGES" ]; then
   apt-get update
   apt-get -y install $PACKAGES
@@ -58,8 +60,10 @@ cat > /etc/btnap.conf <<EOF
 MODE="$MODE"            # values: server|client
 
 # server configuration
-BR_DEV="$BR_DEV"          # bridge device (must be in sync with dnsmasq.conf)
-BR_IP="$BR_IP"      # must fit to range in dnsmasq.conf)
+# IP addresses must correspond with dnsmasq or with your home-network
+BR_DEV="$BR_DEV"    # bridge-device
+BR_IP="$BR_IP"      # IP of bridge
+BR_GW="$BR_GW"      # GW-IP for bridge
 ADD_IF="$ADD_IF"          # interface to add to the bridge, e.g. eth0
 
 # client configuration
@@ -86,18 +90,21 @@ fi
 
 # --- configure dnsmasq   ---------------------------------------------------
 
-[ -f /etc/dnsmasq.conf ] &&  cp -a /etc/dnsmasq.conf \
-                     /etc/dnsmasq.conf.$(date -r /etc/dnsmasq.conf '+%Y%m%d')
-cat > /etc/dnsmasq.conf <<EOF
+if [ "$BT_CONF_DNSMASQ" = "1" ]; then
+  [ -f /etc/dnsmasq.conf ] &&  cp -a /etc/dnsmasq.conf \
+                       /etc/dnsmasq.conf.$(date -r /etc/dnsmasq.conf '+%Y%m%d')
+  cat > /etc/dnsmasq.conf <<EOF
 interface=$BR_DEV
 expand-hosts
 domain=$BR_DOMAIN
 dhcp-range=$BR_RANGE
 EOF
+fi
 
 # --- activate service   ----------------------------------------------------
 
 systemctl enable btnap.service
+[ "$BT_CONF_DNSMASQ" = "1" ] && systemctl restart dnsmasq.service
 
 # --- final configuration is manual   ---------------------------------------
 
