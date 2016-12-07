@@ -31,7 +31,7 @@ for networking.
 
 A **client** needs a second bluetooth-device to establish a connection.
 The second device must be a server or a nap. With this setup, you can
-provide an internet connection from one Pi (e.g. a Pi-Zero) using a
+provide an internet connection to a Pi (e.g. a Pi-Zero) using a
 second pi as a nap.
 
 A **nap** is a special version of the server. It bridges incoming
@@ -45,7 +45,10 @@ bridge. For every incoming connection it creates a new bluetooth-based
 network interface `bnepX` and adds it to the bridge. The difference between
 the server and the nap is that the latter also adds an existing
 network interface to the bridge, so all connected clients will use
-that interface for access to the network.
+that interface for access to the network. Depending on your needs,
+you could also configure routing from the bridge-device to an
+existing network device, but this setup is not directly supported by
+this project.
 
 For clients, the `btnap.service` will just establish a connection
 to the provided remote bluetooth device.
@@ -72,6 +75,10 @@ It adds a template configuration file (`/etc/btnap.conf`) and it enables
 script before installation and provide your own defaults for a number
 of variables, but it is better to change the generated configuration file.
 
+There are some install-time only configuration options (e.g. additional
+installation of dnsmasq). Please check the install-script and change
+as needed.
+
 
 Configuration
 -------------
@@ -81,9 +88,10 @@ All configuration is done in the file `/etc/btnap.conf`:
     MODE="server"             # values: server|client
 
     # server configuration
-    BR_DEV="br0"              # bridge device (must be in sync with dnsmasq.conf)
-    BR_IP="192.168.1.1/24"    # must fit to range in dnsmasq.conf)
-    ADD_IF=""                 # add eth0 to convert the server to a nap
+    BR_DEV="br0"                # bridge-device
+    BR_IP="192.168.20.99/24"    # IP of bridge/network-size
+    BR_GW="192.168.20.1"        # GW-IP for bridge
+    ADD_IF=""                   # add eth0 to convert the server to a nap
 
     # client configuration
     REMOTE_DEV=""           # MAC of remote BT nap server
