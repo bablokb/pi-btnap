@@ -19,10 +19,6 @@ from __future__ import absolute_import, print_function
 import os, sys, time, types, subprocess, signal
 import dbus
 
-import * from Agent
-
-### ~bluezutils.py
-
 iface_base = 'org.bluez'
 iface_dev = '{}.Device1'.format(iface_base)
 iface_adapter = '{}.Adapter1'.format(iface_base)
